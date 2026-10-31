@@ -1,0 +1,7 @@
+name: __NAME__
+version: 0.1.0
+main: __PACKAGE__.__MAIN__
+api-version: '26.3'
+description: One sentence about what this plugin does.
+authors: [__AUTHOR__]
+depend: [ForgeCore]

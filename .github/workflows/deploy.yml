@@ -1,0 +1,89 @@
+name: Deploy to server
+
+# Runs after a merge to main. The deploy job waits for an officer to click "Approve and deploy"
+# (the production environment's required reviewers), so merging and restarting the server are separate decisions.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'plugins/**'
+      - 'gradle/**'
+      - 'gradle.properties'
+      - '*.gradle.kts'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  build:
+    # Plugin code runs during the build, so this job never sees any secrets.
+    name: Build plugins
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check plugin rules
+        run: python3 .github/scripts/check_plugins.py
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: gradle/actions/wrapper-validation@v6
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Build and test
+        run: ./gradlew build
+      - name: Collect JARs
+        run: |
+          mkdir dist
+          cp plugins/*/build/libs/tf-*.jar dist/
+          ls -l dist
+      - uses: actions/upload-artifact@v7
+        with:
+          name: deploy-jars
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14
+
+  deploy:
+    # Only downloads the JARs and uploads them. It never runs code from the plugins.
+    name: Deploy to server
+    needs: build
+    if: vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github/scripts
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: deploy-jars
+          path: dist
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - run: pip install paramiko==5.1.0
+      - name: Stop server, upload plugins, start server
+        run: python .github/scripts/deploy.py dist
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.SFTP_PORT }}
+          SFTP_USER: ${{ secrets.SFTP_USER }}
+          SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
+          SFTP_PRIVATE_KEY: ${{ secrets.SFTP_PRIVATE_KEY }}
+          SFTP_HOST_KEY: ${{ secrets.SFTP_HOST_KEY }}
+          SFTP_PLUGINS_DIR: ${{ vars.SFTP_PLUGINS_DIR }}
+          PTERO_PANEL_URL: ${{ secrets.PTERO_PANEL_URL }}
+          PTERO_SERVER_ID: ${{ secrets.PTERO_SERVER_ID }}
+          PTERO_API_KEY: ${{ secrets.PTERO_API_KEY }}
+          SSH_STOP_COMMAND: ${{ secrets.SSH_STOP_COMMAND }}
+          SSH_START_COMMAND: ${{ secrets.SSH_START_COMMAND }}
+          RESTART_WARNING_SECONDS: ${{ vars.RESTART_WARNING_SECONDS }}
+          DRY_RUN: ${{ vars.DEPLOY_DRY_RUN }}

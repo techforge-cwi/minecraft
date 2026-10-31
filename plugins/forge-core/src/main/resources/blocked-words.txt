@@ -1,0 +1,6 @@
+# ForgeCore blocked words: one word or phrase per line. Lines starting with # are ignored.
+# Matching is whole-word and ignores case and accents. Players' questions that contain one are refused,
+# and AI replies that contain one are replaced with a "filtered" message.
+#
+# This file lives on the server (plugins/ForgeCore/blocked-words.txt), not in git.
+# Officers: add entries here, then run /forgeai reload.

@@ -1,0 +1,11 @@
+name: ForgeCore
+version: 1.0.0
+main: io.github.techforgecwi.core.ForgeCorePlugin
+api-version: '26.3'
+description: Shared AI gateway for TechForge plugins. Holds the API key, rate limits, and safety filter.
+authors: [techforge-cwi]
+website: https://github.com/techforge-cwi/minecraft
+permissions:
+  techforge.forgeai.admin:
+    description: Use /forgeai to check, reload, or turn off the AI.
+    default: op

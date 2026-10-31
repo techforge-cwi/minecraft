@@ -1,0 +1,43 @@
+# ForgeCore: the one place TechForge plugins talk to an AI model.
+# Other plugins call ForgeAI.ask(...) and never see the API key.
+# After editing, run /forgeai reload in game (or restart).
+
+enabled: true
+
+# mock   = no network and no cost, just canned replies. The default, so local testing just works.
+# openai = any OpenAI-compatible /chat/completions endpoint (OpenAI, OpenRouter, Groq, Gemini, Ollama, LM Studio, ...)
+mode: mock
+
+provider:
+  # Examples:  https://api.openai.com/v1   https://openrouter.ai/api/v1   http://localhost:11434/v1 (Ollama)
+  base-url: ""
+  # A small, cheap, fast model is plenty for NPC chat.
+  model: ""
+  # The API key is NOT stored in this file. ForgeCore reads it from, in order:
+  #   1. the FORGE_AI_API_KEY environment variable
+  #   2. plugins/ForgeCore/api-key.txt (just the key on one line; upload it with your host's file manager)
+  # Local servers like Ollama don't need a key.
+  timeout-seconds: 20
+  max-output-tokens: 200
+  # Some newer models want max_completion_tokens instead. Change this if the provider rejects max_tokens.
+  token-limit-field: max_tokens
+
+limits:
+  max-prompt-chars: 300
+  max-reply-chars: 500
+  max-history-turns: 8
+  player-cooldown-seconds: 8
+  player-daily-requests: 40
+  # Hard cap for the whole server per day, so a bug or a prank can't run up the bill.
+  server-daily-requests: 800
+
+safety:
+  # Added in front of every plugin's persona. Plugins can't remove it.
+  preamble: >-
+    You are a character on a community college club's Minecraft server. Players can be any age.
+    Keep every reply under 80 words, friendly, and school-appropriate. Never ask for or share
+    personal information. Refuse hateful, sexual, or violent real-world requests and stay in character.
+  # One word or phrase per line, matched as whole words regardless of case or accents.
+  blocked-words-file: blocked-words.txt
+  # true = usage.log also records what players asked and what the AI said. Tell members if you turn this on.
+  log-content: false

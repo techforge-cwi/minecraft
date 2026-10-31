@@ -1,0 +1,5 @@
+# Plugins allowed to use something check_plugins.py normally flags.
+# Format:  plugin-folder: rule   # why it's OK, and who approved it
+# Rules: network, env, process, reflection, secrets, native, unicode-escape, libraries
+#
+# Only officers can change this file (CODEOWNERS). Add an entry only after reading the code that needs it.

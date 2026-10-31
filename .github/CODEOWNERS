@@ -1,0 +1,3 @@
+# Every change needs approval from an officer before it can merge into main.
+# Requires the "officers" team in the techforge-cwi org (see docs/officer-setup.md).
+* @techforge-cwi/officers

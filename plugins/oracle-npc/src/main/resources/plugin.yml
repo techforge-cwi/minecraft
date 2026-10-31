@@ -1,0 +1,11 @@
+name: OracleNpc
+version: 1.0.0
+main: io.github.techforgecwi.oraclenpc.OracleNpcPlugin
+api-version: '26.3'
+description: An AI villager you can talk to. The example plugin to copy when building your own NPC.
+authors: [techforge-cwi]
+depend: [ForgeCore]
+permissions:
+  techforge.oracle.manage:
+    description: Spawn and remove the Oracle with /oracle.
+    default: op

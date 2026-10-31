@@ -1,0 +1,26 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local test server from ./gradlew runServer
+run/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+out/
+bin/
+.classpath
+.project
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets: never commit these
+api-key.txt
+*.env
+.env*
