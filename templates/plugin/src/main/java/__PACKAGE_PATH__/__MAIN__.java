@@ -18,7 +18,7 @@ public final class __MAIN__ extends JavaPlugin {
 
         registerCommand("__ID__", "Ask the AI something.", (source, args) -> {
             if (!(source.getSender() instanceof Player player)) {
-                source.getSender().sendMessage("Run this in game.");
+                source.getSender().sendMessage(Component.text("Run this in game.", NamedTextColor.RED));
                 return;
             }
             String question = String.join(" ", args);

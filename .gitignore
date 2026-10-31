@@ -24,3 +24,6 @@ Thumbs.db
 api-key.txt
 *.env
 .env*
+
+# Python
+__pycache__/

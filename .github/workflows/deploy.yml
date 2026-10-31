@@ -70,7 +70,7 @@ jobs:
         with:
           python-version: '3.13'
       - run: pip install paramiko==5.1.0
-      - name: Stop server, upload plugins, start server
+      - name: Upload plugins (stops and restarts the server if it's running)
         run: python .github/scripts/deploy.py dist
         env:
           SFTP_HOST: ${{ secrets.SFTP_HOST }}
@@ -85,5 +85,8 @@ jobs:
           PTERO_API_KEY: ${{ secrets.PTERO_API_KEY }}
           SSH_STOP_COMMAND: ${{ secrets.SSH_STOP_COMMAND }}
           SSH_START_COMMAND: ${{ secrets.SSH_START_COMMAND }}
+          EXAROTON_API_TOKEN: ${{ secrets.EXAROTON_API_TOKEN }}
+          EXAROTON_SERVER_ID: ${{ secrets.EXAROTON_SERVER_ID }}
+          DEPLOY_METHOD: ${{ vars.DEPLOY_METHOD }}
           RESTART_WARNING_SECONDS: ${{ vars.RESTART_WARNING_SECONDS }}
           DRY_RUN: ${{ vars.DEPLOY_DRY_RUN }}

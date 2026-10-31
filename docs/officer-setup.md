@@ -66,6 +66,19 @@ Collect these values and add them as `production` environment secrets.
 | `SSH_STOP_COMMAND`, `SSH_START_COMMAND` | `sudo systemctl stop minecraft` and `sudo systemctl start minecraft` |
 | Variable `SFTP_PLUGINS_DIR` | For example, `/opt/minecraft/plugins` |
 
+**If it's exaroton:**
+1. In exaroton, open **Account → API**, then create a token.
+2. Add the token as `EXAROTON_API_TOKEN`.
+3. Add the server ID, the part after `/server/` in the server's URL, as `EXAROTON_SERVER_ID`.
+
+If the server is online, the deploy warns players, stops it, uploads, and starts it again. If it's offline, the deploy just uploads, and the plugins load the next time someone starts it. Turn on **auto-stop** in exaroton so an empty server doesn't burn credits.
+
+**If the host has SFTP but no power API** (Bisect, Bloom, and others):
+1. Add the `SFTP_*` secrets the same way as above.
+2. Set the variable `DEPLOY_METHOD` = `next-restart`.
+
+New plugins go straight into `plugins/`. Changed ones go into `plugins/update/`, and Paper swaps them in at the next restart. Set up a daily scheduled restart in the host panel so changes don't wait long.
+
 **Turn it on.** Go to **Settings → Secrets and variables → Actions → Variables**, then:
 1. Add `DEPLOY_ENABLED` = `true` and `DEPLOY_DRY_RUN` = `1`.
 2. Go to **Actions → Deploy to server → Run workflow**, approve it, and read the plan it prints. It connects but changes nothing.
@@ -73,7 +86,7 @@ Collect these values and add them as `production` environment secrets.
 
 Optionally, set `RESTART_WARNING_SECONDS` to change the default 30-second chat warning.
 
-The deploy only replaces `tf-*.jar` files. It removes `tf-*.jar` files whose plugin was deleted from the repo, and it leaves other plugins you installed by hand (LuckPerms and so on) alone. If the host has SFTP but no API, leave `DEPLOY_ENABLED` off. Download the `deploy-jars` artifact from the workflow run and upload it with the panel's file manager while the server is stopped.
+The deploy only replaces `tf-*.jar` files. It removes `tf-*.jar` files whose plugin was deleted from the repo, and it leaves other plugins you installed by hand (LuckPerms and so on) alone. If the host has no SFTP at all (Apex is FTP-only), leave `DEPLOY_ENABLED` off. Download the `deploy-jars` artifact from the workflow run and upload it with the panel's file manager while the server is stopped.
 
 ## 4. Turn on the AI
 
